@@ -19,6 +19,8 @@ public class MapActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Boolean yourBool = getIntent().getExtras().getBoolean("Done");
         setContentView(R.layout.map_activity_layout);
 
         final TouchImageView map = (TouchImageView)findViewById(R.id.map);

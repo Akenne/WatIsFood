@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+import android.content.Intent;
 
 
 public class MainActivity extends Activity {
@@ -28,14 +29,18 @@ public class MainActivity extends Activity {
     //Create an anonymous implementation of OnClickListener
     private OnClickListener openListener = new OnClickListener() {
         public void onClick(View v) {
-          Toast.makeText(MainActivity.this, "The Start button was clicked.", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(getBaseContext(), MapActivity.class);
+            i.putExtra("Open", true);
+            startActivity(i);
         }
     };
 
     // Create an anonymous implementation of OnClickListener
     private OnClickListener allListener = new OnClickListener() {
         public void onClick(View v) {
-         Toast.makeText(MainActivity.this, "The Stop button was clicked.", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(getBaseContext(), MapActivity.class);
+            i.putExtra("Open", false);
+            startActivity(i);
         }
     };
 }
