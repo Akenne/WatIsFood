@@ -7,19 +7,39 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.converter.SimpleXMLConverter;
 
 public class MapActivity extends Activity {
     /**
      * Called when the activity is first created.
      */
 
+    RestAdapter restAdapter;
+    DataInterface dataInterface;
+
+    public static final String API_URL = "https://api.uwaterloo.ca/v2/foodservices/locations.xml?key=f41a069b66774984b6e9d1c406432122";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_activity_layout);
+
+        restAdapter = new RestAdapter.Builder()
+                .setEndpoint(OutletData.API_URL)
+                .setConverter(new SimpleXMLConverter())
+                .build();
+
+        // Create an instance of our SiteData API interface.
+        dataInterface = restAdapter.create(DataInterface.class);
+
+        requestSiteData();
 
         final TouchImageView map = (TouchImageView)findViewById(R.id.map);
         map.setMaxZoom(2);
@@ -67,6 +87,19 @@ public class MapActivity extends Activity {
                 //mCanvas.drawCircle(((curX / scale)), ((curY / scale)),
                 //        width / 2 / scale, mPaint);
                 return false;
+            }
+        });
+    }
+
+    private void requestSiteData() {
+        dataInterface.report(new Callback<OutletData>() {
+            @Override
+            public void success(OutletData siteData, retrofit.client.Response response) {
+                Log.d("WF", "SUCCESS");
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
             }
         });
     }
