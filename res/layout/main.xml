@@ -5,9 +5,10 @@
             android:orientation="vertical"
         >
     <TextView
+            android:layout_marginTop="45dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Wat is App \r\n \r\n \r\n \r\n"
+            android:text="Wat is App"
             android:padding="10dp"
             android:textColor="#FFFFFF"
             android:textSize="75dp"
@@ -15,13 +16,11 @@
             android:typeface="serif"
             />
     <Button
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="210dp"
             android:id="@+id/buttonOpen"
             android:layout_width="fill_parent"
             android:layout_height="170dp"
-            android:background="@drawable/opengreen"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true" />
+            android:background="@drawable/opengreen"/>
     <Button
             android:layout_marginTop="45dp"
             android:id="@+id/buttonAll"
