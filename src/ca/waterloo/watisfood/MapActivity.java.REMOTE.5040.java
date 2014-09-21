@@ -93,7 +93,6 @@ public class MapActivity extends Activity {
                 float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
                 float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
                 Log.d("WF", curX+" "+curY+"");
-                Log.d("WF", "("+curX+", "+curY);
 
                 //mCanvas.drawCircle(((curX / scale)), ((curY / scale)),
                 //        width / 2 / scale, mPaint);

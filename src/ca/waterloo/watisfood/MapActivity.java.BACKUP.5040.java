@@ -93,8 +93,11 @@ public class MapActivity extends Activity {
                 float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
                 float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
                 Log.d("WF", curX+" "+curY+"");
+
+<<<<<<< HEAD
                 Log.d("WF", "("+curX+", "+curY);
 
+=======
                 //mCanvas.drawCircle(((curX / scale)), ((curY / scale)),
                 //        width / 2 / scale, mPaint);
                 for(int i = 0; i < BuildingLocation.coords.length; i++) {
@@ -102,6 +105,7 @@ public class MapActivity extends Activity {
                         //BuildingLocation.buildingCodes[i]
                     }
                 }
+>>>>>>> 584eda63a860b12ced8c0076335e2fb50b7b4470
                 return false;
             }
         });
