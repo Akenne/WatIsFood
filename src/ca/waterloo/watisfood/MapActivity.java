@@ -37,6 +37,8 @@ public class MapActivity extends Activity {
 
     public static final String API_URL = "https://api.uwaterloo.ca/";
 
+    private static long mDeBounce = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,56 +86,91 @@ public class MapActivity extends Activity {
         canvas.drawBitmap(markerBitmap, coord[0] - 17, coord[1] - 47, null);
 */
 
+
         map.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                Display display = getWindowManager().getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-                int width = size.x;
-                int height = size.y;
-                if((ll.getVisibility() == View.VISIBLE) && (event.getY()<(display.getHeight()*0.7))) {
-                    ll.setVisibility(View.GONE);
+                if ( Math.abs(mDeBounce  - event.getEventTime()) < 250) {
+                    //Ignore if it's been less then 250ms since
+                    //the item was last clicked
+                    return true;
                 }
 
-                float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
-                float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
+                int intCurrentY = Math.round(event.getY());
+                int intCurrentX = Math.round(event.getX());
+                int intStartY = event.getHistorySize() > 0 ? Math.round(event.getHistoricalY(0)) : intCurrentY;
+                int intStartX = event.getHistorySize() > 0 ? Math.round(event.getHistoricalX(0)) : intCurrentX;
 
-
-                for(int i = 0; i < BuildingLocation.coords.length; i++) {
-                    if(((BuildingLocation.coords[i][0] > curX- 50) && (BuildingLocation.coords[i][0] < curX+ 50)) &&
-                            ((BuildingLocation.coords[i][1] > curY- 50) && (BuildingLocation.coords[i][1] < curY+ 50))){
-                        Log.d("WF", curX+" "+curY+"");
-                        //BuildingLocation.buildingCodes[i]
-                        int count = 0;
-                        OutletData.Item store = null;
-                        for (OutletData.Item item : data.getData()) {
-                            Log.d("WF", (item.getBuilding())+" "+(BuildingLocation.buildingCodes[i])+"");
-                            if (String.valueOf(item.getBuilding()).equals(BuildingLocation.buildingCodes[i])){
-                                count++;
-                                if (count>1){
-                                    ll.setVisibility(View.VISIBLE);
-                                    break;
-                                }
-                                store = item;
-                            }
-                        }
-
-                        Intent shop = new Intent(getBaseContext(), ShopInfoActivity.class);
-                        Bundle mBundle = new Bundle();
-                        mBundle.putString("title", store.getOutlet_name());
-                        mBundle.putString("isOpen", store.getIs_open_now());
-                        mBundle.putString("description", store.getDescription());
-                        String[] times = new String[7];
-                        for(int j=0;i<7;i++){
-                            times[j]=(store.getOpening_hour() + "-" + store.getClosing_hour());
-                        }
-                        mBundle.putStringArray("times", times);
-                        shop.putExtras(mBundle);
-                        startActivity(shop);
-                        break;
+                if ( (event.getAction() == MotionEvent.ACTION_UP) && (Math.abs(intCurrentX - intStartX) < 3) && (Math.abs(intCurrentY - intStartY) < 3) ) {
+                    if ( 0 > event.getDownTime() ) {
+                        //Still got occasional duplicates without this
+                        return true;
                     }
+
+                    // handle the click
+
+                    Display display = getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    int width = size.x;
+                    int height = size.y;
+                    if((ll.getVisibility() == View.VISIBLE) && (event.getY()<(display.getHeight()*0.7))) {
+                        ll.setVisibility(View.GONE);
+                    }
+
+                    float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
+                    float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
+
+
+                    for(int i = 0; i < BuildingLocation.coords.length; i++) {
+                        if(((BuildingLocation.coords[i][0] > curX- 50) && (BuildingLocation.coords[i][0] < curX+ 50)) &&
+                                ((BuildingLocation.coords[i][1] > curY- 50) && (BuildingLocation.coords[i][1] < curY+ 50))){
+                            Log.d("WF", curX+" "+curY+"");
+                            //BuildingLocation.buildingCodes[i]
+                            int count = 0;
+                            OutletData.Item store = null;
+                            for (OutletData.Item item : data.getData()) {
+                                Log.d("WF", (item.getBuilding())+" "+(BuildingLocation.buildingCodes[i])+"");
+                                if (String.valueOf(item.getBuilding()).equals(BuildingLocation.buildingCodes[i])){
+                                    count++;
+                                    if (count>1){
+                                        ll.setVisibility(View.VISIBLE);
+                                        break;
+                                    }
+                                    store = item;
+                                }
+                            }
+
+                            Intent shop = new Intent(getBaseContext(), ShopInfoActivity.class);
+                            Bundle mBundle = new Bundle();
+                            mBundle.putString("title", store.getOutlet_name());
+                            mBundle.putString("isOpen", store.getIs_open_now());
+                            mBundle.putString("description", store.getDescription());
+                            String[] times = new String[7];
+
+                        /*
+                        for(int j=0;j<7;j++){
+                            times[j]=(store.getOpening_hour() + "-" + store.getClosing_hour());
+                        }*/
+
+                            times[0] = store.getOpening_hours().getMonday().getOpening_hour() + "-" + store.getOpening_hours().getMonday().getClosing_hour();
+                            times[1] = store.getOpening_hours().getTuesday().getOpening_hour() + "-" + store.getOpening_hours().getTuesday().getClosing_hour();
+                            times[2] = store.getOpening_hours().getWednesday().getOpening_hour() + "-" + store.getOpening_hours().getWednesday().getClosing_hour();
+                            times[3] = store.getOpening_hours().getThursday().getOpening_hour() + "-" + store.getOpening_hours().getThursday().getClosing_hour();
+                            times[4] = store.getOpening_hours().getFriday().getOpening_hour() + "-" + store.getOpening_hours().getFriday().getClosing_hour();
+                            times[5] = store.getOpening_hours().getSaturday().getOpening_hour() + "-" + store.getOpening_hours().getSaturday().getClosing_hour();
+                            times[6] = store.getOpening_hours().getSunday().getOpening_hour() + "-" + store.getOpening_hours().getSunday().getClosing_hour();
+
+                            mBundle.putStringArray("times", times);
+                            shop.putExtras(mBundle);
+                            startActivity(shop);
+                            break;
+                        }
+                    }
+
+                    mDeBounce  = event.getEventTime();
+                    return true;
                 }
                 return false;
             }
@@ -153,13 +190,11 @@ public class MapActivity extends Activity {
                 Set<String> applicableBuildings = new HashSet<String>();
 
                 for (OutletData.Item item : siteData.getData()) {
-                    Log.d("WF", open + "item.getIs_open_now()");
-                        if (open && (item.getIs_open_now() != "1")){
-                            continue;
+                        if (item.getIs_open_now() != null && item.getIs_open_now().length() > 0){
+                            applicableBuildings.add(item.getBuilding());
+                            int[] coord = bLoc.locate(String.valueOf(item.getBuilding()));
+                            canvas.drawBitmap(markerBitmap, coord[0] - 17, coord[1] - 47, null);
                         }
-                        applicableBuildings.add(item.getBuilding());
-                        int[] coord = bLoc.locate(String.valueOf(item.getBuilding()));
-                        canvas.drawBitmap(markerBitmap, coord[0] - 17, coord[1] - 47, null);
                 }
 
                 Log.d("WF", map + " is the map value");
