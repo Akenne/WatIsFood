@@ -93,15 +93,7 @@ public class MapActivity extends Activity {
 
                 float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
                 float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
-<<<<<<< HEAD
 
-=======
-                Log.d("WF", curX+" "+curY+"");
-                Log.d("WF", "("+curX+", "+curY);
->>>>>>> e8b1cf4320f730124357f93d5c447dfdb143ce0e
-
-                //mCanvas.drawCircle(((curX / scale)), ((curY / scale)),
-                //        width / 2 / scale, mPaint);
 
                 for(int i = 0; i < BuildingLocation.coords.length; i++) {
                     if(((BuildingLocation.coords[i][0] > curX- 50) && (BuildingLocation.coords[i][0] < curX+ 50)) &&
