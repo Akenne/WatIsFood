@@ -6,6 +6,13 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+    <ca.waterloo.watisfood.TouchImageView
+            android:id="@+id/building"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scaleType="center"
+            android:src="@drawable/map_colour"
+            />
     <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"

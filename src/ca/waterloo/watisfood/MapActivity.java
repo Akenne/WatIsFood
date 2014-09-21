@@ -42,10 +42,13 @@ public class MapActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        open = getIntent().getExtras().getBoolean("Done");
         setContentView(R.layout.map_activity_layout);
+
+
+        Bundle b = this.getIntent().getExtras();
+
+        open = b.getBoolean("seeOpen");
+        Log.d("WF", "Open is " + open);
 
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint(API_URL)
@@ -132,39 +135,39 @@ public class MapActivity extends Activity {
                             OutletData.Item store = null;
                             for (OutletData.Item item : data.getData()) {
                                 Log.d("WF", (item.getBuilding())+" "+(BuildingLocation.buildingCodes[i])+"");
-                                if (String.valueOf(item.getBuilding()).equals(BuildingLocation.buildingCodes[i])){
-                                    count++;
-                                    if (count>1){
-                                        ll.setVisibility(View.VISIBLE);
-                                        break;
+                                if (String.valueOf(item.getBuilding()).equals(BuildingLocation.buildingCodes[i])) {
+                                    if (!open || (open && item.getIs_open_now() != null)) {
+
+                                        count++;
+                                        if (count > 1) {
+                                            ll.setVisibility(View.VISIBLE);
+                                            break;
+                                        }
+                                        store = item;
+
+                                        Intent shop = new Intent(getBaseContext(), ShopInfoActivity.class);
+                                        Bundle mBundle = new Bundle();
+                                        mBundle.putString("title", store.getOutlet_name());
+                                        mBundle.putString("isOpen", store.getIs_open_now());
+                                        mBundle.putString("description", store.getDescription());
+                                        mBundle.putString("building", store.getBuilding());
+                                        String[] times = new String[7];
+
+                                        times[0] = store.getOpening_hours().getMonday().getOpening_hour() + "-" + store.getOpening_hours().getMonday().getClosing_hour();
+                                        times[1] = store.getOpening_hours().getTuesday().getOpening_hour() + "-" + store.getOpening_hours().getTuesday().getClosing_hour();
+                                        times[2] = store.getOpening_hours().getWednesday().getOpening_hour() + "-" + store.getOpening_hours().getWednesday().getClosing_hour();
+                                        times[3] = store.getOpening_hours().getThursday().getOpening_hour() + "-" + store.getOpening_hours().getThursday().getClosing_hour();
+                                        times[4] = store.getOpening_hours().getFriday().getOpening_hour() + "-" + store.getOpening_hours().getFriday().getClosing_hour();
+                                        times[5] = store.getOpening_hours().getSaturday().getOpening_hour() + "-" + store.getOpening_hours().getSaturday().getClosing_hour();
+                                        times[6] = store.getOpening_hours().getSunday().getOpening_hour() + "-" + store.getOpening_hours().getSunday().getClosing_hour();
+
+                                        mBundle.putStringArray("times", times);
+                                        shop.putExtras(mBundle);
+                                        startActivity(shop);
                                     }
-                                    store = item;
                                 }
                             }
 
-                            Intent shop = new Intent(getBaseContext(), ShopInfoActivity.class);
-                            Bundle mBundle = new Bundle();
-                            mBundle.putString("title", store.getOutlet_name());
-                            mBundle.putString("isOpen", store.getIs_open_now());
-                            mBundle.putString("description", store.getDescription());
-                            String[] times = new String[7];
-
-                        /*
-                        for(int j=0;j<7;j++){
-                            times[j]=(store.getOpening_hour() + "-" + store.getClosing_hour());
-                        }*/
-
-                            times[0] = store.getOpening_hours().getMonday().getOpening_hour() + "-" + store.getOpening_hours().getMonday().getClosing_hour();
-                            times[1] = store.getOpening_hours().getTuesday().getOpening_hour() + "-" + store.getOpening_hours().getTuesday().getClosing_hour();
-                            times[2] = store.getOpening_hours().getWednesday().getOpening_hour() + "-" + store.getOpening_hours().getWednesday().getClosing_hour();
-                            times[3] = store.getOpening_hours().getThursday().getOpening_hour() + "-" + store.getOpening_hours().getThursday().getClosing_hour();
-                            times[4] = store.getOpening_hours().getFriday().getOpening_hour() + "-" + store.getOpening_hours().getFriday().getClosing_hour();
-                            times[5] = store.getOpening_hours().getSaturday().getOpening_hour() + "-" + store.getOpening_hours().getSaturday().getClosing_hour();
-                            times[6] = store.getOpening_hours().getSunday().getOpening_hour() + "-" + store.getOpening_hours().getSunday().getClosing_hour();
-
-                            mBundle.putStringArray("times", times);
-                            shop.putExtras(mBundle);
-                            startActivity(shop);
                             break;
                         }
                     }
@@ -190,7 +193,7 @@ public class MapActivity extends Activity {
                 Set<String> applicableBuildings = new HashSet<String>();
 
                 for (OutletData.Item item : siteData.getData()) {
-                        if (item.getIs_open_now() != null && item.getIs_open_now().length() > 0){
+                        if (item.getIs_open_now() != null || !open){
                             applicableBuildings.add(item.getBuilding());
                             int[] coord = bLoc.locate(String.valueOf(item.getBuilding()));
                             canvas.drawBitmap(markerBitmap, coord[0] - 17, coord[1] - 47, null);

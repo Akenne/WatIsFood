@@ -30,7 +30,11 @@ public class MainActivity extends Activity {
     private OnClickListener openListener = new OnClickListener() {
         public void onClick(View v) {
             Intent i = new Intent(getBaseContext(), MapActivity.class);
-            i.putExtra("Open", true);
+
+            Bundle mBundle = new Bundle();
+            mBundle.putBoolean("seeOpen", true);
+            
+            i.putExtras(mBundle);
             startActivity(i);
         }
     };
@@ -39,7 +43,11 @@ public class MainActivity extends Activity {
     private OnClickListener allListener = new OnClickListener() {
         public void onClick(View v) {
             Intent i = new Intent(getBaseContext(), MapActivity.class);
-            i.putExtra("Open", false);
+
+            Bundle mBundle = new Bundle();
+            mBundle.putBoolean("seeOpen", false);
+
+            i.putExtras(mBundle);
             startActivity(i);
         }
     };

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import library.imagezoom.ImageViewTouch;
 
 /**
  * Created by Kevin on 21/09/2014.
@@ -14,6 +15,7 @@ public class ShopInfoActivity extends Activity {
     TextView isOpen;
     TextView description;
     TextView[] times;
+    TouchImageView header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,7 @@ public class ShopInfoActivity extends Activity {
         title = (TextView) findViewById(R.id.title);
         isOpen = (TextView) findViewById(R.id.is_open);
         description = (TextView) findViewById(R.id.description);
+        header = (TouchImageView) findViewById(R.id.building);
         times = new TextView[7];
 
         times[0] = (TextView) findViewById(R.id.time1);
@@ -37,7 +40,12 @@ public class ShopInfoActivity extends Activity {
 
         Bundle b = this.getIntent().getExtras();
 
+        String buildingName = b.getString("building");
         String[] time = b.getStringArray("times");
+        /*
+        int [] coordinates = new [2]
+        header.setZoom(1,);
+        */
 
         title.setText(b.getString("title"));
         if (b.getString("isOpen") != null) {
