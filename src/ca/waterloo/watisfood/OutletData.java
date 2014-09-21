@@ -76,11 +76,8 @@ public class OutletData {
         public String getMethod_id() { return this.method_id; }
         public void setMethod_id(String _value) { this.method_id = _value; }
 
-
         public String getMethod() { return this.method; }
         public void setMethod(String _value) { this.method = _value; }
-
-
     }
 
     public static class Item {
@@ -108,18 +105,14 @@ public class OutletData {
         @Element(name="longitude", required = false)
         String longitude;
 
-
         @Element(name="description", required = false)
         String description;
-
 
         @Element(name="notice", required = false)
         String notice;
 
-
         @Element(name="is_open_now", required = false)
         String is_open_now;
-
 
         @Element(name="opening_hours", required = false)
         Opening_hours opening_hours;
