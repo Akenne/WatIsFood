@@ -28,7 +28,8 @@ public class MapActivity extends Activity {
     Bitmap bmp = null;
     Bitmap markerBitmap = null;
     Canvas canvas = null;
-    //LinearLayout ll;
+    OutletData data = null;
+    LinearLayout ll;
 
 
     public static final String API_URL = "https://api.uwaterloo.ca/";
@@ -49,8 +50,8 @@ public class MapActivity extends Activity {
         // Create an instance of our SiteData API interface.
         dataInterface = restAdapter.create(DataInterface.class);
 
-        //ll = (LinearLayout) findViewById(R.id.slider);
-        //ll.setVisibility(View.VISIBLE);
+        ll = (LinearLayout) findViewById(R.id.slider);
+        ll.setVisibility(View.GONE);
 
         map = (TouchImageView)findViewById(R.id.map);
         map.setMaxZoom(1);
@@ -92,13 +93,26 @@ public class MapActivity extends Activity {
 
                 float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
                 float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
-                Log.d("WF", curX+" "+curY+"");
+
 
                 //mCanvas.drawCircle(((curX / scale)), ((curY / scale)),
                 //        width / 2 / scale, mPaint);
+
                 for(int i = 0; i < BuildingLocation.coords.length; i++) {
-                    if((BuildingLocation.coords[i][0] > curX) && (BuildingLocation.coords[i][1] == curY)){
+                    if(((BuildingLocation.coords[i][0] > curX- 50) && (BuildingLocation.coords[i][0] < curX+ 50)) &&
+                            ((BuildingLocation.coords[i][1] > curY- 50) && (BuildingLocation.coords[i][1] < curY+ 50))){
+                        Log.d("WF", curX+" "+curY+"");
                         //BuildingLocation.buildingCodes[i]
+                        int count = 0;
+                        for (OutletData.Item item : data.getData()) {
+                            if (item.getBuilding().equals(BuildingLocation.buildingCodes[i])){
+                                count++;
+                                if (count>1){
+                                    ll.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                        //go to list screen
                     }
                 }
                 return false;
@@ -110,6 +124,8 @@ public class MapActivity extends Activity {
         dataInterface.report(new Callback<OutletData>() {
             @Override
             public void success(OutletData siteData, retrofit.client.Response response) {
+
+                data = siteData;
 
                 BuildingLocation bLoc = new BuildingLocation();
 
