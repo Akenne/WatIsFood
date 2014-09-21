@@ -25,7 +25,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
 	protected OnGestureListener mGestureListener;
 	protected OnScaleGestureListener mScaleListener;
 	protected boolean mDoubleTapEnabled = true;
-	protected boolean mScaleEnabled = true;
+	protected boolean mScaleEnabled = false;
 	protected boolean mScrollEnabled = true;
 	private OnImageViewTouchDoubleTapListener mDoubleTapListener;
 	private OnImageViewTouchSingleTapListener mSingleTapListener;

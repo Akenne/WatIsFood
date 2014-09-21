@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:padding="8dp"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="23sp"
+            />
+    <TextView
+            android:id="@+id/is_open"
+            android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="12dp"
+              android:textSize="18sp"/>
+    <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingBottom="12dp"
+            android:textSize="18sp"/>
+
+    <TextView
+            android:id="@+id/time1"
+            android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+    <TextView
+            android:id="@+id/time2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+    <TextView
+            android:id="@+id/time3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+    <TextView
+            android:id="@+id/time4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+    <TextView
+            android:id="@+id/time5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+    <TextView
+            android:id="@+id/time6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+    <TextView
+            android:id="@+id/time7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+
+
+</LinearLayout>

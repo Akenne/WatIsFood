@@ -48,8 +48,8 @@ public class MapActivity extends Activity {
 
 
         map = (TouchImageView)findViewById(R.id.map);
-        map.setMaxZoom(2);
-        map.setMinZoom((float)0.5);
+        map.setMaxZoom(1);
+        map.setMinZoom(1);
 
         // Init our overlay bitmap
 
@@ -88,8 +88,8 @@ public class MapActivity extends Activity {
                 float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
                 float curY = (float)(1718 * map.getScrollPosition().y + (event.getY() * Math.pow(map.getCurrentZoom(), -1) - (height/2)));
 
-                //mCanvas.drawCircle(((curX / scale)), ((curY / scale)),
-                //        width / 2 / scale, mPaint);
+                Log.d("WF", "("+curX+", "+curY);
+
                 return false;
             }
         });
