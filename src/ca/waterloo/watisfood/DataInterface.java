@@ -10,7 +10,7 @@ import retrofit.http.Path;
  */
 
 public interface DataInterface {
-    @GET("")
+    @GET("/v2/foodservices/locations.xml?key=f41a069b66774984b6e9d1c406432122")
     void report(
             Callback<OutletData> cb
     );

@@ -2,10 +2,7 @@
 package ca.waterloo.watisfood;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Point;
+import android.graphics.*;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -16,6 +13,9 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.converter.SimpleXMLConverter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class MapActivity extends Activity {
     /**
      * Called when the activity is first created.
@@ -24,7 +24,12 @@ public class MapActivity extends Activity {
     RestAdapter restAdapter;
     DataInterface dataInterface;
 
-    public static final String API_URL = "https://api.uwaterloo.ca/v2/foodservices/locations.xml?key=f41a069b66774984b6e9d1c406432122";
+    TouchImageView map = null;
+    Bitmap bmp = null;
+    Bitmap markerBitmap = null;
+    Canvas canvas = null;
+
+    public static final String API_URL = "https://api.uwaterloo.ca/";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,16 +39,15 @@ public class MapActivity extends Activity {
         setContentView(R.layout.map_activity_layout);
 
         restAdapter = new RestAdapter.Builder()
-                .setEndpoint(OutletData.API_URL)
+                .setEndpoint(API_URL)
                 .setConverter(new SimpleXMLConverter())
                 .build();
 
         // Create an instance of our SiteData API interface.
         dataInterface = restAdapter.create(DataInterface.class);
 
-        requestSiteData();
 
-        final TouchImageView map = (TouchImageView)findViewById(R.id.map);
+        map = (TouchImageView)findViewById(R.id.map);
         map.setMaxZoom(2);
         map.setMinZoom((float)0.5);
 
@@ -53,25 +57,23 @@ public class MapActivity extends Activity {
         Bitmap mapBitmap = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.map_colour);
 
-        // Overlay bitmap
-        Bitmap mapBitmapOverlay = BitmapFactory.decodeResource(this.getResources(),
-                R.drawable.map_colour_overlay);
-
         // Marker bitmap
-        Bitmap markerBitmap = BitmapFactory.decodeResource(this.getResources(),
+        markerBitmap = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.map_marker);
 
-        Bitmap bmp = mapBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        bmp = mapBitmap.copy(Bitmap.Config.ARGB_8888, true);
         // Init the canvas
-        Canvas canvas = new Canvas(bmp);
+        canvas = new Canvas(bmp);
         // Draw the text on top of the canvas
 
+        requestSiteData();
+
+        /*
         BuildingLocation bLoc = new BuildingLocation();
         int[] coord = bLoc.locate("DC");
 
         canvas.drawBitmap(markerBitmap, coord[0] - 17, coord[1] - 47, null);
-
-        map.setImageBitmap(bmp);
+*/
 
         map.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -97,11 +99,25 @@ public class MapActivity extends Activity {
         dataInterface.report(new Callback<OutletData>() {
             @Override
             public void success(OutletData siteData, retrofit.client.Response response) {
-                Log.d("WF", "SUCCESS");
+
+                BuildingLocation bLoc = new BuildingLocation();
+
+                Set<String> applicableBuildings = new HashSet<String>();
+
+                for (OutletData.Item item : siteData.getData()) {
+                        applicableBuildings.add(item.getBuilding());
+                        int[] coord = bLoc.locate(String.valueOf(item.getBuilding()));
+                        canvas.drawBitmap(markerBitmap, coord[0] - 17, coord[1] - 47, null);
+                }
+
+                Log.d("WF", map + " is the map value");
+                map.setImageBitmap(bmp);
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
+                Log.d("WF", retrofitError.getMessage());
+                Log.d("WF", retrofitError.getUrl());
             }
         });
     }
