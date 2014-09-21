@@ -42,10 +42,14 @@ public class ShopInfoActivity extends Activity {
 
         String buildingName = b.getString("building");
         String[] time = b.getStringArray("times");
-        /*
-        int [] coordinates = new [2]
-        header.setZoom(1,);
-        */
+
+        BuildingLocation location = new BuildingLocation();
+        int [] coordinates = location.locate(String.valueOf(buildingName));
+
+        Log.d("WF", "C.X: " + coordinates[0] + " C.Y: " + coordinates[1]);
+        Log.d("WF", "C.X2: " + (coordinates[0] / (float)2330) + " C.Y2: " + coordinates[1] / (float)1718);
+
+        header.setZoom(1, (float)(coordinates[0] / (float)2330), (float)(coordinates[1] / (float)1718));
 
         title.setText(b.getString("title"));
         if (b.getString("isOpen") != null) {
