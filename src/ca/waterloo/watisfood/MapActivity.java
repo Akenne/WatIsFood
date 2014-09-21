@@ -58,9 +58,6 @@ public class MapActivity extends Activity {
         // Create an instance of our SiteData API interface.
         dataInterface = restAdapter.create(DataInterface.class);
 
-        ll = (LinearLayout) findViewById(R.id.slider);
-        ll.setVisibility(View.GONE);
-
         map = (TouchImageView)findViewById(R.id.map);
         map.setMaxZoom(1);
         map.setMinZoom(1);
@@ -118,9 +115,6 @@ public class MapActivity extends Activity {
                     display.getSize(size);
                     int width = size.x;
                     int height = size.y;
-                    if((ll.getVisibility() == View.VISIBLE) && (event.getY()<(display.getHeight()*0.7))) {
-                        ll.setVisibility(View.GONE);
-                    }
 
                     float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
                     float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
@@ -139,10 +133,6 @@ public class MapActivity extends Activity {
                                     if (!open || (open && item.getIs_open_now() != null)) {
 
                                         count++;
-                                        if (count > 1) {
-                                            ll.setVisibility(View.VISIBLE);
-                                            break;
-                                        }
                                         store = item;
 
                                         Intent shop = new Intent(getBaseContext(), ShopInfoActivity.class);
