@@ -13,6 +13,19 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="main" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../simplexml/src/main/java" />
+          <root url="file://$MODULE_DIR$/../simplexml/src/test/java" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="retrofit-1.6.1" level="project" />
+    <orderEntry type="library" name="simple-xml-2.7.1" level="project" />
   </component>
 </module>
 

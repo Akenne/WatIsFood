@@ -12,7 +12,7 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.converter.SimpleXMLConverter;
-
+import android.widget.LinearLayout;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,12 +28,15 @@ public class MapActivity extends Activity {
     Bitmap bmp = null;
     Bitmap markerBitmap = null;
     Canvas canvas = null;
+    //LinearLayout ll;
+
 
     public static final String API_URL = "https://api.uwaterloo.ca/";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         Boolean yourBool = getIntent().getExtras().getBoolean("Done");
         setContentView(R.layout.map_activity_layout);
@@ -46,10 +49,12 @@ public class MapActivity extends Activity {
         // Create an instance of our SiteData API interface.
         dataInterface = restAdapter.create(DataInterface.class);
 
+        //ll = (LinearLayout) findViewById(R.id.slider);
+        //ll.setVisibility(View.VISIBLE);
 
         map = (TouchImageView)findViewById(R.id.map);
-        map.setMaxZoom(2);
-        map.setMinZoom((float)0.5);
+        map.setMaxZoom(1);
+        map.setMinZoom(1);
 
         // Init our overlay bitmap
 
@@ -86,10 +91,16 @@ public class MapActivity extends Activity {
                 int height = size.y;
 
                 float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
-                float curY = (float)(1718 * map.getScrollPosition().y + (event.getY() * Math.pow(map.getCurrentZoom(), -1) - (height/2)));
+                float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
+                Log.d("WF", curX+" "+curY+"");
 
                 //mCanvas.drawCircle(((curX / scale)), ((curY / scale)),
                 //        width / 2 / scale, mPaint);
+                for(int i = 0; i < BuildingLocation.coords.length; i++) {
+                    if((BuildingLocation.coords[i][0] > curX) && (BuildingLocation.coords[i][1] == curY)){
+                        //BuildingLocation.buildingCodes[i]
+                    }
+                }
                 return false;
             }
         });
