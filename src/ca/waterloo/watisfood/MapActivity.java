@@ -2,6 +2,7 @@
 package ca.waterloo.watisfood;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.*;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,8 @@ public class MapActivity extends Activity {
      * Called when the activity is first created.
      */
 
+    boolean open = false;
+
     RestAdapter restAdapter;
     DataInterface dataInterface;
 
@@ -39,7 +42,7 @@ public class MapActivity extends Activity {
         super.onCreate(savedInstanceState);
 
 
-        Boolean yourBool = getIntent().getExtras().getBoolean("Done");
+        open = getIntent().getExtras().getBoolean("Done");
         setContentView(R.layout.map_activity_layout);
 
         restAdapter = new RestAdapter.Builder()
@@ -90,6 +93,9 @@ public class MapActivity extends Activity {
                 display.getSize(size);
                 int width = size.x;
                 int height = size.y;
+                if((ll.getVisibility() == View.VISIBLE) && (event.getY()<(display.getHeight()*0.7))) {
+                    ll.setVisibility(View.GONE);
+                }
 
                 float curX = (float)(2330 * map.getScrollPosition().x + (event.getX() * Math.pow(map.getCurrentZoom(), -1) - (width/2)));
                 float curY = (float)(1718 * map.getScrollPosition().y + (event.getY()) - (height/2)+60);//voodoo magic do not touch
@@ -101,21 +107,39 @@ public class MapActivity extends Activity {
                         Log.d("WF", curX+" "+curY+"");
                         //BuildingLocation.buildingCodes[i]
                         int count = 0;
+                        OutletData.Item store = null;
                         for (OutletData.Item item : data.getData()) {
-                            if (item.getBuilding().equals(BuildingLocation.buildingCodes[i])){
+                            Log.d("WF", (item.getBuilding())+" "+(BuildingLocation.buildingCodes[i])+"");
+                            if (String.valueOf(item.getBuilding()).equals(BuildingLocation.buildingCodes[i])){
                                 count++;
                                 if (count>1){
                                     ll.setVisibility(View.VISIBLE);
+                                    break;
                                 }
+                                store = item;
                             }
                         }
-                        //go to list screen
+
+                        Intent shop = new Intent(getBaseContext(), ShopInfoActivity.class);
+                        Bundle mBundle = new Bundle();
+                        mBundle.putString("title", store.getOutlet_name());
+                        mBundle.putString("isOpen", store.getIs_open_now());
+                        mBundle.putString("description", store.getDescription());
+                        String[] times = new String[7];
+                        for(int j=0;i<7;i++){
+                            times[j]=(store.getOpening_hour() + "-" + store.getClosing_hour());
+                        }
+                        mBundle.putStringArray("times", times);
+                        shop.putExtras(mBundle);
+                        startActivity(shop);
+                        break;
                     }
                 }
                 return false;
             }
         });
     }
+
 
     private void requestSiteData() {
         dataInterface.report(new Callback<OutletData>() {
@@ -129,6 +153,10 @@ public class MapActivity extends Activity {
                 Set<String> applicableBuildings = new HashSet<String>();
 
                 for (OutletData.Item item : siteData.getData()) {
+                    Log.d("WF", open + "item.getIs_open_now()");
+                        if (open && (item.getIs_open_now() != "1")){
+                            continue;
+                        }
                         applicableBuildings.add(item.getBuilding());
                         int[] coord = bLoc.locate(String.valueOf(item.getBuilding()));
                         canvas.drawBitmap(markerBitmap, coord[0] - 17, coord[1] - 47, null);
